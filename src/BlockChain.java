@@ -1,47 +1,75 @@
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 class BlockChain {
 
-    private int zeroes;
-    private Block head;
-    private Block tail;
+    private int leadZeroes;
 
-    public BlockChain(int zeroes) {
-        this.zeroes = zeroes;
+    private BlockInfo blockInfo;
+    private final List<Block> chain;
+
+    public BlockChain(int leadZeroes) {
+        this.leadZeroes = leadZeroes;
+        this.chain = new ArrayList<>();
+        this.blockInfo = new BlockInfo(1L, leadZeroes, "0");
     }
 
-    public void addBlock() {
-        // Get details to generate a new block
-        Date date = new Date();
-        long nextId = this.tail == null ? 1 : this.tail.getId() + 1;
-        String hash = this.tail == null ? "0" : this.tail.getHash();
-        // Generate a hash for a new block
-        long magic;
-        String nextHash = null;
-        String suffix = Long.toString(nextId) + Long.toString(date.getTime()) + hash;
-        for (magic = 0; magic < Long.MAX_VALUE; magic++) {
-            nextHash = StringUtil.applySha256(Long.toString(magic) + suffix);
-            if (StringUtil.countLeadingZeroes(nextHash) == this.zeroes){
-                break;           
-            }
+    public synchronized BlockInfo getBlockInfo() {
+        return this.blockInfo;
+    }
+
+    public synchronized boolean addBlock(Block block) {
+        if (block == null) {
+            throw new IllegalArgumentException("Block can't be null");
         }
-        Date end = new Date();
-        // Create a new block and add to the chain
-        this.tail = new Block(nextId, magic, date, nextHash, this.tail); 
-        if (this.head == null)
-            this.head = this.tail;
-        // Based on the task print newly created block
-        this.tail.print();
-        System.out.printf("Block was generating for %.0f seconds\n\n", (end.getTime() - date.getTime()) / 1000.);
+        if (blockInfo.prevHash.equals(block.getPrevHash())){
+            this.regulateZeroes(block.getMiningTime());
+            this.chain.add(block);
+            BlockInfo next = new BlockInfo(blockInfo.id + 1, leadZeroes, block.getHash());
+            blockInfo = next;
+            return true;
+        }
+        return false;
     }
 
-    public void print(){
-        Block curr = this.head;
-        while (curr != null) {
-            curr.print();
+    public void regulateZeroes(int time) {
+        if (time < 1) {
+            leadZeroes += 3;
+        } else if (time < 5) {
+            leadZeroes += 2;
+        } else if (time < 10) {
+            leadZeroes++;
+        } else if (time < 45) {
+            leadZeroes--;
+        } else {
+            leadZeroes -= 2;
+            leadZeroes = Math.max(0, leadZeroes);
+        }
+    }
+    
+    public synchronized int getBlockCount() {
+        return this.chain.size();
+    }
+
+    public void print(int count){
+        for (int i = 0; i < Math.min(this.chain.size(), count); i++) {
+            chain.get(i).print();
             System.out.println();
-            curr = curr.getNext();
         }
     }
 
+    public static class BlockInfo {
+
+        public final int leadZeroes;
+        public final String prevHash;
+        public final long id;
+
+        public BlockInfo(long id, int leadZeroes, String prevHash) {
+            this.id = id;
+            this.leadZeroes = leadZeroes;
+            this.prevHash = prevHash;
+        }
+
+    }
 }

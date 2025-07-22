@@ -1,14 +1,42 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 public class Main {
     
+    private static int MAX_MINERS = 15;
+    private static int INIT_ZEROES = 0;
+    private static int POOL_SIZE = 88888888;
+    private static int BLOCK_COUNT = 5;
+    private static int SLEEP_MS = 100; 
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter how many zeros the hash must start with: ");
-        int zeroes = sc.nextInt();
-        BlockChain bc = new BlockChain(zeroes);
-        for (int i = 0; i < 5; i++){
-            bc.addBlock();
+
+        BlockChain blockchain = new BlockChain(INIT_ZEROES);
+        Hasher hasher = new Hasher.SHA256();
+        ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
+        List<Miner> miners = new ArrayList<>();
+
+        for (int i = 0; i < MAX_MINERS; i++) {
+            miners.add(new Miner((long)i, blockchain, hasher));
         }
+        
+        for (Miner miner: miners){
+            executor.submit(miner);
+        }
+
+        try {
+            while (blockchain.getBlockCount() < BLOCK_COUNT) {
+                Thread.sleep(SLEEP_MS);
+            } 
+            executor.shutdownNow();
+            blockchain.print(BLOCK_COUNT);
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+
     }
 }
