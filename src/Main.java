@@ -8,7 +8,7 @@ public class Main {
     
     private static int MAX_MINERS = 15;
     private static int INIT_ZEROES = 0;
-    private static int POOL_SIZE = 88888888;
+    private static int POOL_SIZE = 8;
     private static int BLOCK_COUNT = 5;
     private static int SLEEP_MS = 100; 
 
@@ -29,6 +29,8 @@ public class Main {
 
         try {
             while (blockchain.getBlockCount() < BLOCK_COUNT) {
+                System.out.println("Not completed yet....");
+                System.out.println("Current count " + blockchain.getBlockCount());
                 Thread.sleep(SLEEP_MS);
             } 
             executor.shutdownNow();

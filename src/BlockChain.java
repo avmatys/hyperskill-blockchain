@@ -40,12 +40,9 @@ class BlockChain {
             leadZeroes += 2;
         } else if (time < 10) {
             leadZeroes++;
-        } else if (time < 45) {
+        } else  {
             leadZeroes--;
-        } else {
-            leadZeroes -= 2;
-            leadZeroes = Math.max(0, leadZeroes);
-        }
+        } 
     }
     
     public synchronized int getBlockCount() {
