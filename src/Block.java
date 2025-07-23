@@ -43,6 +43,7 @@ class Block {
         System.out.println("Magic number: " + this.magic);
         System.out.println("Hash of the previous block: \n" + this.prevHash);
         System.out.println("Hash of the block: \n" + this.hash);
+        System.out.println("Block was generating for " + this.miningTime + " seconds");
     }
     
 }

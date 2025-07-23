@@ -8,7 +8,7 @@ public class Main {
     
     private static int MAX_MINERS = 15;
     private static int INIT_ZEROES = 0;
-    private static int POOL_SIZE = 8;
+    private static int POOL_SIZE = 4;
     private static int BLOCK_COUNT = 5;
     private static int SLEEP_MS = 100; 
 
