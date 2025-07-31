@@ -46,17 +46,17 @@ class Block {
     public int getMiningTime() {
         return this.miningTime;
     }
-
-    public void print() {
-        System.out.println("Block:");
-        System.out.println("Created by miner # " + this.minerId);
-        System.out.println("Id: " + this.id);
-        System.out.println("Timestamp: " + this.timestamp);
-        System.out.println("Magic number: " + this.magic);
-        System.out.println("Hash of the previous block: \n" + this.prevHash);
-        System.out.println("Hash of the block: \n" + this.hash);
-        System.out.println("Block data: " + (this.data != null ? ("\n" + this.data.toString()) : "no messages")); 
-        System.out.println("Block was generating for " + this.miningTime + " seconds");
+    @Override
+    public String toString() {
+        return "Block:\n" +
+               "Created by miner # " + minerId + "\n" +
+               "Id: " + id + "\n" +
+               "Timestamp: " + timestamp + "\n" +
+               "Magic number: " + magic + "\n" +
+               "Hash of the previous block: \n" + prevHash + "\n" +
+               "Hash of the block: \n" + hash + "\n" +
+               "Block data: " + (data != null ? ("\n" + data.toString()) : "no messages") + "\n" +
+               "Block was generating for " + miningTime + " seconds";
     }
     
 }

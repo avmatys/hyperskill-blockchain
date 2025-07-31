@@ -71,7 +71,7 @@ class BlockChain {
 
     public void print(int count){
         for (int i = 0; i < Math.min(this.chain.size(), count); i++) {
-            chain.get(i).print();
+            System.out.println(this.chain.get(i));
             System.out.println(this.chainEvents.get(i));
             System.out.println();
         }
