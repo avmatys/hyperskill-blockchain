@@ -5,7 +5,7 @@ class Miner implements Runnable {
     private final long id;
     private final Hasher hasher;
     private final BlockChain blockchain;
-    private final static int SLEEP_NO_JOB_MS = 1000;
+    private final static int SLEEP_NO_JOB_MS = 100;
 
 
     public Miner(long id, BlockChain blockchain, Hasher hasher) throws IllegalArgumentException {
@@ -32,8 +32,8 @@ class Miner implements Runnable {
     public void mine() throws InterruptedException {
         BlockChain.BlockInfo info = blockchain.getBlockInfo();
         if (info == null) {
-            System.out.println("SLEEP " + this.id);
             Thread.sleep(SLEEP_NO_JOB_MS);
+            return;
         }
         long timestamp = new Date().getTime();
         Block block = BlockFactory.createBlock(info, hasher, id, timestamp);

@@ -11,7 +11,15 @@ class BlockFactory {
         String sId = Long.toString(info.id);
         String sTimestamp = Long.toString(timestamp);
         String sMinerId = Long.toString(minerId);
-        Hasher.Result res = hasher.hash(info.leadZeroes, sId, sTimestamp, sMinerId, info.prevHash);
-        return new Block(info.id, res.magic, timestamp, minerId, res.secs, res.hash, info.prevHash);
+        String messages = info.messages != null ? info.messages : "";
+        Hasher.Result res = hasher.hash(info.leadZeroes, sId, sTimestamp, sMinerId, info.prevHash, messages);
+        return new Block(info.id, 
+                         res.magic, 
+                         timestamp, 
+                         minerId, 
+                         res.secs, 
+                         res.hash, 
+                         info.prevHash, 
+                         info.messages);
     }
 }
