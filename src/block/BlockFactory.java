@@ -1,4 +1,13 @@
-class BlockFactory {
+package block;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import crypto.Hasher;
+import message.Message;
+
+public class BlockFactory {
 
     public BlockFactory() {
         throw new UnsupportedOperationException("Block Factory can't be instatiated");
@@ -11,15 +20,12 @@ class BlockFactory {
         String sId = Long.toString(info.id);
         String sTimestamp = Long.toString(timestamp);
         String sMinerId = Long.toString(minerId);
-        String messages = info.messages != null ? info.messages : "";
+        String messages = Optional.ofNullable(info.messages)
+                                  .orElse(Collections.emptyList()) 
+                                  .stream()
+                                  .map(Message::getText)
+                                  .collect(Collectors.joining());
         Hasher.Result res = hasher.hash(info.leadZeroes, sId, sTimestamp, sMinerId, info.prevHash, messages);
-        return new Block(info.id, 
-                         res.magic, 
-                         timestamp, 
-                         minerId, 
-                         res.secs, 
-                         res.hash, 
-                         info.prevHash, 
-                         info.messages);
+        return new Block(info.id,res.magic, timestamp, minerId, res.secs, res.hash, info.prevHash, info.messages);
     }
 }

@@ -1,9 +1,13 @@
 import java.util.List;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.IntStream;
 import java.util.Arrays;
+
+import crypto.*;
+import entity.User;
+import entity.Miner;
+import block.BlockChain;
 
 public class Main {
     
@@ -17,8 +21,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        BlockChain blockchain = new BlockChain(INIT_ZEROES);
+        Verifier verifier = new Verifier.SHA1withRSA();
+        BlockChain blockchain = new BlockChain(INIT_ZEROES, verifier);
+
         Hasher hasher = new Hasher.SHA256();
+        Signer signer = new Signer.SHA1withRSA();
+        Generator keygen = new Generator.RSA();
+
         ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
         ExecutorService messages = Executors.newFixedThreadPool(POOL_SIZE);
         
@@ -26,7 +35,7 @@ public class Main {
                                       .mapToObj(i -> new Miner((long) i, blockchain, hasher))
                                       .toList();
         List<User> users = Arrays.stream(USERS)
-                                 .map(name -> new User(name, blockchain))
+                                 .map(name -> new User(name, blockchain, keygen, signer))
                                  .toList();
 
         miners.stream().forEach(miner -> executor.submit(miner));

@@ -1,3 +1,7 @@
+package crypto;
+
+import utils.StringUtils;
+
 public interface Hasher {
     
     Result hash(int zeroes, String... inputs) throws InterruptedException;
@@ -18,8 +22,8 @@ public interface Hasher {
                 if (Thread.currentThread().isInterrupted()) {
                     throw new InterruptedException("Hash computation was interrupted."); 
                 }
-                hash = StringUtil.applySha256(Long.toString(magic) + suffix);
-                if (StringUtil.countLeadingZeroes(hash) == leadZeroes) {
+                hash = StringUtils.applySha256(Long.toString(magic) + suffix);
+                if (StringUtils.countLeadingZeroes(hash) == leadZeroes) {
                     break;
                 }
             }
@@ -31,11 +35,11 @@ public interface Hasher {
     }
 
     
-    class Result {
+    public class Result {
         
-        final long magic;
-        final int secs;
-        final String hash;
+        public final long magic;
+        public final int secs;
+        public final String hash;
 
         public Result(long magic, int secs, String hash) {
             this.magic = magic;

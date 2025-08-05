@@ -1,7 +1,9 @@
+package utils;
+
 import java.lang.StringBuilder;
 import java.security.MessageDigest;
 
-class StringUtil {
+public class StringUtils {
     public static String applySha256(String input){
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

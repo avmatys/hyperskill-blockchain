@@ -1,6 +1,12 @@
-import java.util.Date;
+package entity;
 
-class Miner implements Runnable {
+import java.util.Date;
+import crypto.Hasher;
+import block.BlockChain;
+import block.Block;
+import block.BlockFactory;
+
+public class Miner implements Runnable {
 
     private final long id;
     private final Hasher hasher;
