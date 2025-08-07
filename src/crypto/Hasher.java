@@ -38,12 +38,12 @@ public interface Hasher {
     public class Result {
         
         public final long magic;
-        public final int secs;
+        public final int  time;
         public final String hash;
 
-        public Result(long magic, int secs, String hash) {
+        public Result(long magic, int time, String hash) {
             this.magic = magic;
-            this.secs = secs;
+            this.time = time;
             this.hash = hash;
         }
 

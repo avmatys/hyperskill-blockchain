@@ -5,31 +5,51 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import message.Message;
+import entity.Miner;
+import transaction.Transaction;
 
 public class Block {
     
     private final long id;
     private final long magic;
     private final long timestamp;
-    private final long minerId; 
+    
+    private final Miner miner;
     private final int miningTime;
+    private final long coins;
+
     private final String hash;
     private final String prevHash;
-    private final List<Message> messages;
+    private final List<Transaction> transactions;
 
-    public Block(long id, long magic, long timestamp, long minerId, int miningTime, 
-                 String hash, String prevHash, List<Message> messages) {
+    public Block(long id, long magic, long timestamp, Miner miner, int miningTime, 
+                 String hash, String prevHash, List<Transaction> transactions) {
         this.id = id;
         this.magic = magic;
         this.timestamp = timestamp;
-        this.minerId = minerId;
+        this.miner = miner;
         this.miningTime = miningTime;
         this.hash = hash;
         this.prevHash = prevHash;
-        this.messages = messages == null ? new ArrayList<>() : new ArrayList<>(messages);
+        this.coins = 0;
+        this.transactions = transactions == null 
+                                ? new ArrayList<>() 
+                                : new ArrayList<>(transactions);
     }
 
+    public Block(Block block, long coins) {
+        this.coins = coins;
+        this.id = block.id;
+        this.magic = block.magic;
+        this.timestamp = block.timestamp;
+        this.miner = block.miner;
+        this.miningTime = block.miningTime;
+        this.hash = block.hash;
+        this.prevHash = block.prevHash;
+        this.transactions = block.transactions == null 
+                                ? new ArrayList<>() 
+                                : new ArrayList<>(block.transactions);
+    }
 
     public long getId() {
         return this.id;
@@ -47,25 +67,26 @@ public class Block {
         return this.miningTime;
     }
     
-    public List<Message> getMessages() {
-        return Collections.unmodifiableList(this.messages);
+    public List<Transaction> getTransactions() {
+        return Collections.unmodifiableList(this.transactions);
     }
 
     @Override
     public String toString() {
-        String allMessages = this.messages != null && !this.messages.isEmpty() 
-                                ? "\n" + messages.stream()
-                                                 .map(Message::getText)
-                                                 .collect(Collectors.joining("\n"))
-                                : "no messages";
+        String allTransactions = this.transactions != null && !this.transactions.isEmpty() 
+                                         ? "\n" + transactions.stream()
+                                                              .map(Transaction::getText)
+                                                              .collect(Collectors.joining("\n"))
+                                         : "no transactions";
         return "Block:\n" +
-               "Created by miner # " + minerId + "\n" +
+               "Created by: " + miner.getName() + "\n" +
+               miner.getName() + " gets " + coins + " VC\n" +
                "Id: " + id + "\n" +
                "Timestamp: " + timestamp + "\n" +
                "Magic number: " + magic + "\n" +
                "Hash of the previous block: \n" + prevHash + "\n" +
                "Hash of the block: \n" + hash + "\n" +
-               "Block data: " + allMessages + "\n" +
+               "Block data: " + allTransactions + "\n" +
                "Block was generating for " + miningTime + " seconds";
     }
     

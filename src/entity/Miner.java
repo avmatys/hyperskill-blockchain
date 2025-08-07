@@ -1,6 +1,8 @@
 package entity;
 
 import java.util.Date;
+import java.util.Objects;
+
 import crypto.Hasher;
 import block.BlockChain;
 import block.Block;
@@ -11,16 +13,28 @@ public class Miner implements Runnable {
     private final long id;
     private final Hasher hasher;
     private final BlockChain blockchain;
+    private final User user;
+
+    private static long ID = 1;
     private final static int SLEEP_NO_JOB_MS = 100;
 
-
-    public Miner(long id, BlockChain blockchain, Hasher hasher) throws IllegalArgumentException {
-        if (blockchain == null || hasher == null) {
-            throw new IllegalArgumentException("Blockchain and hasher can't be null");
-        }
-        this.id = id;
+    public Miner(BlockChain blockchain, Hasher hasher, User user) throws IllegalArgumentException {
+        Objects.requireNonNull(blockchain, "Blockchain must be non null");
+        Objects.requireNonNull(hasher, "Hasher must be non null");
+        Objects.requireNonNull(user, "User must be non null");
+        
+        this.id = ID++;
         this.hasher = hasher;
         this.blockchain = blockchain;
+        this.user = user;
+    }
+ 
+    public long getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.user.getName();
     }
 
     @Override
@@ -42,8 +56,9 @@ public class Miner implements Runnable {
             return;
         }
         long timestamp = new Date().getTime();
-        Block block = BlockFactory.createBlock(info, hasher, id, timestamp);
-        blockchain.addBlock(block);
+        Block block = BlockFactory.createBlock(info, hasher, this, timestamp);
+        long coins = blockchain.addBlock(block);
+        this.user.addCoins(coins);
     }
 
 }
